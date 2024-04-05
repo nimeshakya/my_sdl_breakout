@@ -1,3 +1,5 @@
+#ifndef PADDLE_H
+#define PADDLE_H
 #include <SDL.h>
 
 #include "GameWindow.h"
@@ -15,6 +17,9 @@ public:
 
 	void Render();
 
+	Vector2 GetPosition() const { return mPosition; }
+	int GetWidth() const { return mWidth; }
+	int GetHeight() const { return mHeight; }
 private:
 	Vector2 mPosition;
 	double mPaddleSpeed;
@@ -22,3 +27,4 @@ private:
 	int mWidth;
 	int mHeight;
 };
+#endif // !PADDLE_H

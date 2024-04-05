@@ -1,5 +1,9 @@
+#ifndef BALL_H
+#define BALL_H
+
 #include "GameWindow.h"
 #include "Vector2.h"
+#include "Paddle.h"
 
 class Ball
 {
@@ -8,6 +12,8 @@ public:
 
 	void Update(double deltaTime);
 	void CollideWithBorder();
+
+	void CollideWithPaddle(const Paddle& paddle);
 
 	// Render ball
 	void Render();
@@ -19,3 +25,5 @@ private:
 	double mVelX;
 	double mVelY;
 };
+
+#endif // !BALL_H

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include <SDL.h>
 
@@ -6,6 +7,7 @@
 #include "GameManager.h"
 #include "Paddle.h"
 #include "Ball.h"
+#include "Brick.h"
 
 // Initialize SDL and subsystems
 bool init();
@@ -88,6 +90,42 @@ int main(int argc, char* argv[])
 			
 			Ball ball;
 
+			// bricks
+			std::vector<Brick> brickArr{};
+			// load bricks
+			for (int i = 0; i < SCREEN_WIDTH; ++i)
+			{
+				if (i % (UNIT_LEN * 4) == 0)
+				{
+					Brick newBrick((double)i, SCREEN_HEIGHT / 2, UNIT_LEN * 4, UNIT_LEN, GameObjColor::BRICK_0_RED, GameObjColor::BRICK_0_GREEN, GameObjColor::BRICK_0_BLUE);
+					brickArr.push_back(newBrick);
+				}
+			}
+			for (int i = 0; i < SCREEN_WIDTH; ++i)
+			{
+				if (i % (UNIT_LEN * 4) == 0)
+				{
+					Brick newBrick((double)i, SCREEN_HEIGHT / 2 - UNIT_LEN, UNIT_LEN * 4, UNIT_LEN, GameObjColor::BRICK_1_RED, GameObjColor::BRICK_1_GREEN, GameObjColor::BRICK_1_BLUE);
+					brickArr.push_back(newBrick);
+				}
+			}
+			for (int i = 0; i < SCREEN_WIDTH; ++i)
+			{
+				if (i % (UNIT_LEN * 4) == 0)
+				{
+					Brick newBrick((double)i, SCREEN_HEIGHT / 2 - UNIT_LEN * 2, UNIT_LEN * 4, UNIT_LEN, GameObjColor::BRICK_2_RED, GameObjColor::BRICK_2_GREEN, GameObjColor::BRICK_2_BLUE);
+					brickArr.push_back(newBrick);
+				}
+			}
+			for (int i = 0; i < SCREEN_WIDTH; ++i)
+			{
+				if (i % (UNIT_LEN * 4) == 0)
+				{
+					Brick newBrick((double)i, SCREEN_HEIGHT / 2 - UNIT_LEN * 3, UNIT_LEN * 4, UNIT_LEN, GameObjColor::BRICK_3_RED, GameObjColor::BRICK_3_GREEN, GameObjColor::BRICK_3_BLUE);
+					brickArr.push_back(newBrick);
+				}
+			}
+
 			// Time calculations
 			Uint32 lastUpdate{ SDL_GetTicks() };
 			double deltaTime{ 0.0 };
@@ -110,6 +148,7 @@ int main(int argc, char* argv[])
 				paddle.Update(deltaTime);
 
 				ball.CollideWithBorder();
+				ball.CollideWithPaddle(paddle);
 				ball.Update(deltaTime);
 
 				// update tick
@@ -118,6 +157,10 @@ int main(int argc, char* argv[])
 				gameManager.RenderClear();
 				paddle.Render();
 				ball.Render();
+				for (auto brick : brickArr)
+				{
+					brick.Render();
+				}
 				gameManager.RenderPresent();
 			}
 		}

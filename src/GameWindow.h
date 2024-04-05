@@ -19,6 +19,22 @@ namespace GameObjColor
 	constexpr Uint8 OB_RED{ 0xD2 };
 	constexpr Uint8 OB_GREEN{ 0xD2 };
 	constexpr Uint8 OB_BLUE{ 0xD2 };
+
+	constexpr Uint8 BRICK_0_RED{ 0x00 };
+	constexpr Uint8 BRICK_0_GREEN{ 0x00 };
+	constexpr Uint8 BRICK_0_BLUE{ 0xFF };
+
+	constexpr Uint8 BRICK_1_RED{ 0x00 };
+	constexpr Uint8 BRICK_1_GREEN{ 0xFF };
+	constexpr Uint8 BRICK_1_BLUE{ 0x00 };
+
+	constexpr Uint8 BRICK_2_RED{ 0xFF };
+	constexpr Uint8 BRICK_2_GREEN{ 0xFF };
+	constexpr Uint8 BRICK_2_BLUE{ 0x00 };
+
+	constexpr Uint8 BRICK_3_RED{ 0xFF };
+	constexpr Uint8 BRICK_3_GREEN{ 0x00 };
+	constexpr Uint8 BRICK_3_BLUE{ 0x00 };
 }
 
 extern SDL_Window* gWindow;
