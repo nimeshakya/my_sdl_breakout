@@ -4,16 +4,26 @@
 #include "GameWindow.h"
 #include "Vector2.h"
 #include "Paddle.h"
+#include "Border.h"
+
+enum class CollisionType
+{
+	COLLISION_TOP,
+	COLLISION_LEFT,
+	COLLISION_RIGHT,
+};
 
 class Ball
 {
 public:
-	Ball(double x = 0.0, double y = 0.0) : mPosition{ x, y }, mRadius{ UNIT_LEN }, mBallSpeed{ 500 }, mVelX{ 1.0 }, mVelY{ 1.0 } {}
+	Ball(double x = UNIT_LEN * 2, double y = UNIT_LEN * 5) : mPosition{ x, y }, mRadius{ UNIT_LEN }, mBallSpeed{ 500 }, mVelX{ 1.0 }, mVelY{ 1.0 } {}
 
 	void Update(double deltaTime);
-	void CollideWithBorder();
+	void CollideWithBorder(const Border& border, CollisionType collisionType);
 
 	void CollideWithPaddle(const Paddle& paddle);
+
+	void ResetPosition();
 
 	// Render ball
 	void Render();

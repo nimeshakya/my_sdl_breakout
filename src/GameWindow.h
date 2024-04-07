@@ -5,9 +5,10 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 
-constexpr int SCREEN_WIDTH{ 640};
+constexpr int SCREEN_WIDTH{ 640 };
 constexpr int SCREEN_HEIGHT{ 480 };
 constexpr int UNIT_LEN{ 15 };
+constexpr int BRICK_LEN{ 58 };
 
 // Global Golour for game objects
 namespace GameObjColor
