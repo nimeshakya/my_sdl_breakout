@@ -8,7 +8,7 @@
 class Paddle
 {
 public:
-	Paddle(double x = 0.0, double y = 0.0) : mPosition{ x, y }, mPaddleSpeed{ 1000.0 }, mVelX { 0.0 }, mWidth{ UNIT_LEN * 6 }, mHeight{ UNIT_LEN } {}
+	Paddle(double x = 0.0, double y = 0.0) : mPosition{ x, y }, mPaddleSpeed{ 1200.0 }, mVelX { 0.0 }, mWidth{ UNIT_LEN * 6 }, mHeight{ UNIT_LEN } {}
 
 	void Update(double deltaTime);
 
