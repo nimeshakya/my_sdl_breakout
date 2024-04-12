@@ -5,10 +5,6 @@
 void Ball::Update(double deltaTime)
 {
 	mPosition += Vector2(mVelX, mVelY) * mBallSpeed * deltaTime;
-	if (mPosition.y() + mRadius >= SCREEN_HEIGHT)
-	{
-		ResetPosition();
-	}
 }
 
 void Ball::CollideWithBorder(const Border& border, CollisionType collisionType)
@@ -101,20 +97,19 @@ void Ball::CollideWithPaddle(const Paddle& paddle)
 	//std::cout << mPosition.x() << '\t' << mPosition.y() << '\t' << mVelX << '\t' << mVelY << '\n';
 }
 
-void Ball::CheckBrickCollision(std::vector<Brick>& bricks)
+void Ball::CheckBrickCollision(std::vector<Brick>& bricks, GameManager& gameManager)
 {
 	for (int i = 0; i < bricks.size(); ++i)
 	{
-		if (CollideWithBrick(bricks[i]))
+		if (CollideWithBrick(bricks[i], gameManager))
 		{
-			std::cout << i << '\n';
 			bricks.erase(bricks.begin() + i);
 			--i;
 		}
 	}
 }
 
-bool Ball::CollideWithBrick(const Brick& brick)
+bool Ball::CollideWithBrick(const Brick& brick, GameManager& gameManager)
 {
 	Vector2 brickPos{ brick.GetPosition() };
 	double brickTop{ brickPos.y() };
@@ -155,11 +150,26 @@ bool Ball::CollideWithBrick(const Brick& brick)
 		break;
 	}
 
-	double padding{ 10.0 }; // offset so that ball don't penetrate object and does double collision detection
+	// increase score
+	gameManager.IncrementScore();
 
+	// collision overlap on axes
+	double collisionX{ (ballRight - brickLeft) >= (brickRight - ballLeft) ? brickRight - ballLeft : ballRight - brickLeft };
+	double collisionY{ (ballBot - brickTop) >= (brickBot - ballTop) ? brickBot - ballTop : ballBot - brickTop };
+
+	double padding{ 10.0 }; // offset so that ball don't penetrate object and does double collision detection
 	mPosition += Vector2(0.0, mVelY > 0.0 ? -padding : padding);
 
-	mVelY *= -1;
+	if (collisionX > collisionY)
+	{
+		// ball has collided on longer length of brick
+		mVelY *= -1;
+	}
+	else
+	{
+		// ball collided on shorter length (side) of brick
+		mVelX *= -1;
+	}
 
 	return true;
 }
@@ -178,6 +188,16 @@ void Ball::ResetPosition()
 		mPosition = Vector2(UNIT_LEN * 2, SCREEN_HEIGHT / 2 + UNIT_LEN * 2);
 		mVelX = 1.0;
 		mVelY = 1.0;
+	}
+}
+
+void Ball::HandleOutOfBound(GameManager& gameManager)
+{
+	if (mPosition.y() + mRadius >= SCREEN_HEIGHT)
+	{
+		gameManager.DecrementLife();
+		ResetPosition();
+		gameManager.Pause();
 	}
 }
 

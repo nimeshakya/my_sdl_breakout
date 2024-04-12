@@ -8,6 +8,8 @@
 #include "Paddle.h"
 #include "Border.h"
 #include "Brick.h"
+#include "Score.h"
+#include "GameManager.h"
 
 enum class CollisionType
 {
@@ -32,9 +34,10 @@ public:
 
 	void CollideWithPaddle(const Paddle& paddle); 
 
-	void CheckBrickCollision(std::vector<Brick>& bricks);
-	bool CollideWithBrick(const Brick& brick);
+	void CheckBrickCollision(std::vector<Brick>& bricks, GameManager& gameManager);
+	bool CollideWithBrick(const Brick& brick, GameManager& gameManager);
 
+	void HandleOutOfBound(GameManager& gameManager);
 	void ResetPosition();
 
 	// Render ball

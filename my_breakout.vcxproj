@@ -149,6 +149,8 @@
     <ClCompile Include="src\GameManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Paddle.cpp" />
+    <ClCompile Include="src\Score.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Ball.h" />
@@ -157,6 +159,8 @@
     <ClInclude Include="src\GameManager.h" />
     <ClInclude Include="src\GameWindow.h" />
     <ClInclude Include="src\Paddle.h" />
+    <ClInclude Include="src\Score.h" />
+    <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

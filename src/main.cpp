@@ -2,6 +2,9 @@
 #include <vector>
 
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
 
 #include "GameWindow.h"
 #include "GameManager.h"
@@ -9,6 +12,7 @@
 #include "Ball.h"
 #include "Border.h"
 #include "Brick.h"
+#include "Score.h"
 
 // Initialize SDL and subsystems
 bool init();
@@ -20,6 +24,7 @@ void close();
 // Global variable initialization
 SDL_Window* gWindow{ NULL };
 SDL_Renderer* gRenderer{ NULL };
+TTF_Font* gFont{ NULL };
 
 bool init()
 {
@@ -46,6 +51,28 @@ bool init()
 		std::cout << "Renderer could not be created! SDL ERROR: " << SDL_GetError() << '\n';
 		return !success;
 	}
+	
+	// Initialize PNG loading
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags))
+	{
+		std::cout << "SDL_image could not be initialized! SDL_image ERROR: " << IMG_GetError() << '\n';
+		return !success;
+	}
+
+	// Initialize SDL_ttf
+	if (TTF_Init() == -1)
+	{
+		std::cout << "SDL_ttf could not be initialized! SDL_ttf ERROR: " << TTF_GetError() << '\n';
+		return !success;
+	}
+
+	// Initialize SDL_mixer
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+	{
+		std::cout << "SDL_mixer could not be initialized! SDL_mixer ERROR: " << Mix_GetError() << "\n";
+		return !success;
+	}
 
 	return success;
 }
@@ -54,7 +81,13 @@ bool loadmedia()
 {
 	bool success{ true };
 
-	// load medias here
+	// load global font
+	gFont = TTF_OpenFont("assets/ARCADECLASSIC.TTF", 50);
+	if (gFont == NULL)
+	{
+		std::cout << "Failed to load font! SDL_ttf ERROR: " << TTF_GetError() << '\n';
+		return !success;
+	}
 
 	return success;
 }
@@ -89,56 +122,19 @@ int main(int argc, char* argv[])
 			// Game objects
 			Paddle paddle((SCREEN_WIDTH - UNIT_LEN * 6) / 2, SCREEN_HEIGHT - 3*UNIT_LEN);
 
-			Border borderTop(0, UNIT_LEN * 5, SCREEN_WIDTH, UNIT_LEN * 2);
-			Border borderLeft(0, UNIT_LEN * 5, UNIT_LEN * 2, SCREEN_HEIGHT - UNIT_LEN * 5);
-			Border borderRight(SCREEN_WIDTH - UNIT_LEN * 2, UNIT_LEN * 5, UNIT_LEN * 2, SCREEN_HEIGHT - UNIT_LEN * 5);
+			Border borderTop(0, UNIT_LEN * 3, SCREEN_WIDTH, UNIT_LEN * 2);
+			Border borderLeft(0, UNIT_LEN * 3, UNIT_LEN * 2, SCREEN_HEIGHT - UNIT_LEN * 3);
+			Border borderRight(SCREEN_WIDTH - UNIT_LEN * 2, UNIT_LEN * 3, UNIT_LEN * 2, SCREEN_HEIGHT - UNIT_LEN * 3);
 			
 			Ball ball;
 
 			// bricks
 			std::vector<Brick> brickArr{};
 			// load bricks
-			int brickLayWith{ SCREEN_WIDTH - UNIT_LEN * 4 };
-			for (int i = 0; i < brickLayWith; ++i)
-			{
-				if (i % (BRICK_LEN) == 0)
-				{
-					Brick newBrick((double)i + UNIT_LEN * 2, SCREEN_HEIGHT / 2, BRICK_LEN, UNIT_LEN, GameObjColor::BRICK_0_RED, GameObjColor::BRICK_0_GREEN, GameObjColor::BRICK_0_BLUE, 0);
-					brickArr.push_back(newBrick);
-				}
-			}
-			for (int i = 0; i < brickLayWith; ++i)
-			{
-				if (i % (BRICK_LEN) == 0)
-				{
-					Brick newBrick((double)i + UNIT_LEN * 2, SCREEN_HEIGHT / 2 - UNIT_LEN, BRICK_LEN, UNIT_LEN, GameObjColor::BRICK_1_RED, GameObjColor::BRICK_1_GREEN, GameObjColor::BRICK_1_BLUE, 1);
-					brickArr.push_back(newBrick);
-				}
-			}
-			for (int i = 0; i < brickLayWith; ++i)
-			{
-				if (i % (BRICK_LEN) == 0)
-				{
-					Brick newBrick((double)i + UNIT_LEN * 2, SCREEN_HEIGHT / 2 - UNIT_LEN * 2, BRICK_LEN, UNIT_LEN, GameObjColor::BRICK_2_RED, GameObjColor::BRICK_2_GREEN, GameObjColor::BRICK_2_BLUE, 2);
-					brickArr.push_back(newBrick);
-				}
-			}
-			for (int i = 0; i < brickLayWith; ++i)
-			{
-				if (i % (BRICK_LEN) == 0)
-				{
-					Brick newBrick((double)i + UNIT_LEN * 2, SCREEN_HEIGHT / 2 - UNIT_LEN * 3, BRICK_LEN, UNIT_LEN, GameObjColor::BRICK_3_RED, GameObjColor::BRICK_3_GREEN, GameObjColor::BRICK_3_BLUE, 3);
-					brickArr.push_back(newBrick);
-				}
-			}
-			for (int i = 0; i < brickLayWith; ++i)
-			{
-				if (i % (BRICK_LEN) == 0)
-				{
-					Brick newBrick((double)i + UNIT_LEN * 2, SCREEN_HEIGHT / 2 - UNIT_LEN * 4, BRICK_LEN, UNIT_LEN, GameObjColor::BRICK_4_RED, GameObjColor::BRICK_4_GREEN, GameObjColor::BRICK_4_BLUE, 4);
-					brickArr.push_back(newBrick);
-				}
-			}
+			gameManager.LoadBricks(brickArr);
+
+			// scores
+			Score score;
 
 			// Time calculations
 			Uint32 lastUpdate{ SDL_GetTicks() };
@@ -161,25 +157,54 @@ int main(int argc, char* argv[])
 				// Game updates here
 				paddle.Update(deltaTime);
 
-				ball.CheckBrickCollision(brickArr);
-				ball.CollideWithBorder(borderTop, CollisionType::COLLISION_TOP);
-				ball.CollideWithBorder(borderLeft, CollisionType::COLLISION_LEFT);
-				ball.CollideWithBorder(borderRight, CollisionType::COLLISION_RIGHT);
-				ball.CollideWithPaddle(paddle);
-				ball.Update(deltaTime);
+				if (!gameManager.IsPaused() && !gameManager.IsGameOver())
+				{
+					ball.CheckBrickCollision(brickArr, gameManager);
+					ball.CollideWithBorder(borderTop, CollisionType::COLLISION_TOP);
+					ball.CollideWithBorder(borderLeft, CollisionType::COLLISION_LEFT);
+					ball.CollideWithBorder(borderRight, CollisionType::COLLISION_RIGHT);
+					ball.CollideWithPaddle(paddle);
+					ball.Update(deltaTime);
+					ball.HandleOutOfBound(gameManager);
+				}
 
+				if (brickArr.size() <= 0)
+				{
+					gameManager.Pause();
+					gameManager.SetEnd();
+					gameManager.LoadBricks(brickArr);
+					ball.ResetPosition();
+				}
+
+				if (gameManager.IsPaused() && gameManager.IsGameOver())
+				{
+					brickArr.clear();
+					gameManager.LoadBricks(brickArr);
+					gameManager.UnPause(); // so that this won't run again
+					ball.ResetPosition();
+					std::cout << "This Running!\n";
+				}
+
+				gameManager.Update();
 				// update tick
 				lastUpdate = currentTick;
 
 				gameManager.RenderClear();
+
+				gameManager.RenderScore();
 				borderTop.Render();
 				borderLeft.Render();
 				borderRight.Render();
 				paddle.Render();
-				ball.Render();
-				for (auto brick : brickArr)
+
+				if (!gameManager.IsPaused() && !gameManager.IsGameOver()) ball.Render();
+
+				if (!gameManager.IsSetEnd() && !gameManager.IsGameOver())
 				{
-					brick.Render();
+					for (auto brick : brickArr)
+					{
+						brick.Render();
+					}
 				}
 				gameManager.RenderPresent();
 			}
