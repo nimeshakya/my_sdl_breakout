@@ -82,7 +82,7 @@ bool loadmedia()
 	bool success{ true };
 
 	// load global font
-	gFont = TTF_OpenFont("assets/ARCADECLASSIC.TTF", 50);
+	gFont = TTF_OpenFont("assets/Retro Gaming.TTF", 40);
 	if (gFont == NULL)
 	{
 		std::cout << "Failed to load font! SDL_ttf ERROR: " << TTF_GetError() << '\n';
@@ -100,6 +100,9 @@ void close()
 	gRenderer = NULL;
 
 	// Shut down subsystems
+	IMG_Quit();
+	TTF_Quit();
+	Mix_Quit();
 	SDL_Quit();
 }
 
@@ -182,7 +185,6 @@ int main(int argc, char* argv[])
 					gameManager.LoadBricks(brickArr);
 					gameManager.UnPause(); // so that this won't run again
 					ball.ResetPosition();
-					std::cout << "This Running!\n";
 				}
 
 				gameManager.Update();
@@ -206,6 +208,12 @@ int main(int argc, char* argv[])
 						brick.Render();
 					}
 				}
+
+				if (gameManager.IsPaused() || gameManager.IsGameOver())
+				{
+					gameManager.RenderStartGameText();
+				}
+
 				gameManager.RenderPresent();
 			}
 		}

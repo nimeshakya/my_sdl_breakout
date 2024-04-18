@@ -26,6 +26,9 @@ void Ball::CollideWithBorder(const Border& border, CollisionType collisionType)
 	else if (ballRight < borderLeft) return;
 	else if (ballLeft > borderRight) return;
 
+	// play sound
+	soundPlayer.PlaySound(SoundNames::WALL_SFX);
+
 	int padding{ 5 }; // so that ball don't act weird
 
 	if (collisionType == CollisionType::COLLISION_TOP)
@@ -38,8 +41,6 @@ void Ball::CollideWithBorder(const Border& border, CollisionType collisionType)
 		mPosition += Vector2(collisionType == CollisionType::COLLISION_LEFT ? padding : -padding);
 		mVelX *= -1;
 	}
-
-	//std::cout << mPosition.x() << '\t' << mPosition.y() << '\t' << mVelX << '\t' << mVelY << '\n';
 }
 
 void Ball::CollideWithPaddle(const Paddle& paddle)
@@ -60,6 +61,9 @@ void Ball::CollideWithPaddle(const Paddle& paddle)
 	else if (ballTop > paddleBot) return;
 	else if (ballRight < paddleLeft) return;
 	else if (ballLeft > paddleRight) return;
+
+	// play sound
+	soundPlayer.PlaySound(SoundNames::PADDLE_SFX);
 
 	// increase ball speed 
 	if (mBallSpeed < BALL_SPEED_1) mBallSpeed = BALL_SPEED_1;
@@ -92,9 +96,6 @@ void Ball::CollideWithPaddle(const Paddle& paddle)
 
 	mVelX = changeX;
 	mVelY = changeY;
-
-
-	//std::cout << mPosition.x() << '\t' << mPosition.y() << '\t' << mVelX << '\t' << mVelY << '\n';
 }
 
 void Ball::CheckBrickCollision(std::vector<Brick>& bricks, GameManager& gameManager)
@@ -131,18 +132,23 @@ bool Ball::CollideWithBrick(const Brick& brick, GameManager& gameManager)
 	switch (brick.Level())
 	{
 	case 0:
+		soundPlayer.PlaySound(SoundNames::LAYER_0_SFX); // play layer 0 sound
 		break;
 	case 1:
+		soundPlayer.PlaySound(SoundNames::LAYER_1_SFX); // play layer 1 sound
 		break;
 	case 2:
+		soundPlayer.PlaySound(SoundNames::LAYER_2_SFX); // play layer 2 sound
 		if (mBallSpeed > BALL_SPEED_2) break;
 		mBallSpeed = BALL_SPEED_2;
 		break;
 	case 3:
+		soundPlayer.PlaySound(SoundNames::LAYER_3_SFX); // play layer 3 sound
 		if (mBallSpeed > BALL_SPEED_2) break;
 		mBallSpeed = BALL_SPEED_2;
 		break;
 	case 4:
+		soundPlayer.PlaySound(SoundNames::LAYER_4_SFX); // play layer 4 sound
 		if (mBallSpeed > BALL_SPEED_3) break;
 		mBallSpeed = BALL_SPEED_3;
 		break;

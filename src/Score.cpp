@@ -66,6 +66,7 @@ void Score::LoadIntTextTexture(int textInt, Texture& textTexture)
 void Score::LoadScoreTextTexture()
 {
 	// update texture
+	mScoreTextTexture.free();
 	std::stringstream scoreStream;
 	if (mCurrentScore < 10)
 	{

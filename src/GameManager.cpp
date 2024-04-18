@@ -7,6 +7,12 @@ GameManager::GameManager() : e{ NULL } // making event NULL
 	setEnd = false;
 	gameOver = false;
 	Score score;
+	SDL_Color textColor = { GameObjColor::OB_RED, GameObjColor::OB_GREEN, GameObjColor::OB_BLUE };
+
+	if (!mStartActionTextTexture.loadFromRenderedText("Press <p> to start", textColor))
+	{
+		std::cout << "Failed to load start game text texture!\n";
+	}
 }
 
 SDL_Event* GameManager::GetEvents()
@@ -33,7 +39,7 @@ void GameManager::LoadBricks(std::vector<Brick>& brickArr)
 			brickArr.push_back(newBrick);
 		}
 	}
-	/*for (int i = 0; i < brickLayWith; ++i)
+	for (int i = 0; i < brickLayWith; ++i)
 	{
 		if (i % (BRICK_LEN) == 0)
 		{
@@ -64,7 +70,7 @@ void GameManager::LoadBricks(std::vector<Brick>& brickArr)
 			Brick newBrick((double)i + UNIT_LEN * 2, SCREEN_HEIGHT / 2 - UNIT_LEN * 4, BRICK_LEN, UNIT_LEN, GameObjColor::BRICK_4_RED, GameObjColor::BRICK_4_GREEN, GameObjColor::BRICK_4_BLUE, 4);
 			brickArr.push_back(newBrick);
 		}
-	}*/
+	}
 }
 
 void GameManager::HandleEvents()
@@ -85,7 +91,6 @@ void GameManager::HandleEvents()
 		}
 		else if (keysym == SDLK_p && gameOver)
 		{
-			std::cout << "This one!\n";
 			gameOver = false;
 			paused = false;
 			setEnd = false;
@@ -162,4 +167,10 @@ void GameManager::SetEnd()
 void GameManager::UnsetEnd()
 {
 	setEnd = false;
+}
+
+
+void GameManager::RenderStartGameText()
+{
+	mStartActionTextTexture.Render((SCREEN_WIDTH - mStartActionTextTexture.getWidth()) / 2, UNIT_LEN * 6);
 }

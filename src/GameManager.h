@@ -9,6 +9,7 @@
 #include "GameWindow.h"
 #include "Brick.h"
 #include "Score.h"
+#include "Texture.h"
 
 class GameManager
 {
@@ -53,6 +54,8 @@ public:
 	bool IsPaused() const { return paused; }
 	bool IsSetEnd() const { return setEnd; }
 	bool IsGameOver() const { return gameOver; }
+
+	void RenderStartGameText();
 private:
 	bool mQuit; // flag to quit game
 	SDL_Event e; // events
@@ -60,6 +63,9 @@ private:
 	bool paused;
 	bool setEnd;
 	bool gameOver;
+
+	Texture mStartActionTextTexture;
+	Texture mGameOverTextTexture;
 };
 
 #endif // !GAMEMANAGER_H

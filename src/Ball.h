@@ -10,6 +10,7 @@
 #include "Brick.h"
 #include "Score.h"
 #include "GameManager.h"
+#include "Audio.h"
 
 enum class CollisionType
 {
@@ -49,6 +50,7 @@ private:
 	double mBallSpeed;
 	double mVelX;
 	double mVelY;
+	Audio soundPlayer;
 };
 
 #endif // !BALL_H
